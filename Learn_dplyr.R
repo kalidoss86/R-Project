@@ -1,12 +1,4 @@
-rm(cultivar2wine)
-rm(wine)
-rm(directory)
-rm(filenames)
-rm(i)
-rm(mylist)
-rm(names)
-rm(numfiles)
-rm(makeProfilePlot)
+
 
 
 library(dplyr)
@@ -71,3 +63,45 @@ head(aggregate(ArrDelay ~ Dest, flights, mean ))
 flights %>%
   group_by(Dest) %>%
   summarise(avg_delay = mean(ArrDelay, na.rm=TRUE)  )
+
+str(flights)
+
+flights %>%
+  group_by(UniqueCarrier) %>%
+  summarise_each(funs(mean), Cancelled, Diverted )
+
+flights %>%
+  group_by(UniqueCarrier) %>%
+  summarise_each(funs(min(., na.rm = TRUE), max(., na.rm = TRUE  ) ), matches('Delay')  )
+
+flights %>%
+  group_by(Month, DayofMonth ) %>%
+  summarise(flights_count = n()  ) %>%
+  arrange(desc(flights_count))
+
+flights %>%
+  group_by(Month, DayofMonth ) %>%
+  tally(sort = TRUE )
+
+flights %>%
+  group_by(Dest) %>%
+  summarise(flights_count = n(), plane_count = n_distinct(TailNum) )
+
+flights %>%
+  group_by(Dest) %>%
+  select(Cancelled) %>%
+  table() %>%
+  head()
+
+flights %>%
+  group_by(UniqueCarrier) %>%
+  select(Month, DayofMonth, DepDelay ) %>%
+  filter(min_rank(desc(DepDelay)) <=2 ) %>%
+  arrange(UniqueCarrier, desc(DepDelay) )
+
+
+
+?arrange
+
+?min_rank
+  
