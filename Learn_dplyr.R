@@ -1,4 +1,27 @@
-
+# source: https://rpubs.com/justmarkham/dplyr-tutorial
+# filter, select, arrange, mutate, summarize, group_by
+# -----------------------------------------------------
+# filter - is used the filter the data 
+#          eg: filter(flights, Month==1, DayofMonth==1)
+# -----------------------------------------------------
+# select - is used to select columns to display
+#          eg: select(flights, DepTime, ArrTime, FlightNum)
+# ---------------------------------------------------------
+# arrange - is used to sort by column wise
+#           eg: flights %>% 
+#               select(UniqueCarrier, DepDelay) %>%
+#               arrange(DepDelay)
+# --------------------------------------------------------
+# mutate - Create a new variable that are functions of existing variables
+#          eg: flights %>% 
+#              select(Distance, AirTime) %>%
+#              mutate(Speed = Distance/AirTime * 60)
+# ------------------------------------------------------------------------
+# summarise - Reduce variable to values
+#           - flights %>%
+#             group_by(Dest) %>%
+#             summarise(avg_delay = mean(ArrDelay, na.rm=TRUE) )
+# ------------------------------------------------------------------------
 
 
 library(dplyr)
@@ -97,11 +120,31 @@ flights %>%
   group_by(UniqueCarrier) %>%
   select(Month, DayofMonth, DepDelay ) %>%
   filter(min_rank(desc(DepDelay)) <=2 ) %>%
-  arrange(UniqueCarrier, desc(DepDelay) )
+    arrange(UniqueCarrier, desc(DepDelay) )
 
 
+# Use machine learning algorithm
 
-?arrange
+library(caret)
 
-?min_rank
-  
+set.seed(pi)
+
+sflights <- flights[sample(nrow(flights)),]
+head(sflights)
+head(flights)
+
+split <- floor(nrow(flights)/2)
+
+ensembleData <- flights[0:split,]
+blenderData <- flights[(split+1):(split*2),]
+testingData <- flights[(split*2+1): nrow(flights),]
+
+labelName <- "Cancelled"
+predictors <- names(ensembleData)[names(ensembleData) != labelName ]
+
+myControl <- trainControl(method = 'cv', number = 3, repeats = 1, returnResamp = 'none' )
+
+
+model_gbm <- train(ensembleData[,predictors], ensembleData[, labelName], method = 'gbm', trControl = myControl, na.action = na.omit  )
+model_rpart <- train(ensembleData[,predictors], ensembleData[, labelName], method = 'rpart', trControl = myControl  )
+model_treebag <- train(ensembleData[,predictors], ensembleData[, labelName], method = 'treebag', trControl = myControl  )
