@@ -25,8 +25,13 @@ max(salaries$salary)
 
 min(salaries$salary)
 
-salaries %>% 
+sal_mean <- salaries %>% 
   group_by( yearID) %>%
   summarise(avg_sal = mean(salary, na.rm = TRUE ) ) %>%
-  table() %>%
-  head(20)
+  head(n=21L)
+
+str(salaries)
+
+sal_mean <- sal_mean %>% mutate(increment = avg_sal - lag(avg_sal, default = avg_sal[1]) )
+
+sal_mean <- sal_mean %>% mutate(percentInc = increment/avg_sal *100 )
