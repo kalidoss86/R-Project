@@ -35,3 +35,41 @@ str(salaries)
 sal_mean <- sal_mean %>% mutate(increment = avg_sal - lag(avg_sal, default = avg_sal[1]) )
 
 sal_mean <- sal_mean %>% mutate(percentInc = increment/avg_sal *100 )
+
+library(ggplot2)
+
+ggplot(sal_mean, aes(x= yearID, y = increment )) +
+  geom_point()
+
+
+# basic histogram
+hist(sal_mean$avg_sal)
+
+ggplot(sal_mean, aes(x = avg_sal ) ) +
+  geom_histogram()
+
+qplot(data = sal_mean, x = avg_sal, main="Histogram of Avg Salaray"  )
+
+qplot(data = sal_mean, x = increment, y= yearID, main="Histogram of Avg Salaray", color=yearID  )
+
+qplot(data = sal_mean, x = log(increment), y= log(yearID), main="Histogram of Avg Salaray", color=yearID  )
+
+qplot(data = salaries, x= salaries$teamID , y = salaries$salary , geom="boxplot"  )
+
+qplot(data=salaries, x=salaries$yearID, y = salaries$salary,  color=salaries$teamID)
+
+ggplot(salaries, aes(y = salaries$yearID, x = salaries$salary  ) ) +
+  geom_point()
+
+ggplot(salaries, aes(y = salaries$yearID, x = log(salaries$salary)  ) ) +
+  geom_point()
+
+ggplot(sal_mean, aes(y= sal_mean$yearID, x = log(sal_mean$avg_sal)  ) ) +
+  geom_point()
+
+ggplot(sal_mean, aes(y= sal_mean$yearID, x = log(sal_mean$avg_sal), stat_  ) ) +
+  geom_histogram(stat = "bin", binwidth = 4000 )
+
+
+# Follow this tutorial
+# http://tutorials.iq.harvard.edu/R/Rgraphics/Rgraphics.html
