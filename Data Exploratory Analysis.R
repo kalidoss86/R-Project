@@ -27,8 +27,16 @@ min(salaries$salary)
 
 sal_mean <- salaries %>% 
   group_by( yearID) %>%
-  summarise(avg_sal = mean(salary, na.rm = TRUE ) ) %>%
-  head(n=21L)
+  summarise(avg_sal = mean(salary, na.rm = TRUE ),
+            max_sal = max(salary, na.rm = TRUE),
+            min_sal = min(salary, na.rm = TRUE) )
+
+sal_year_lg <- salaries %>%
+  group_by(yearID, lgID) %>%
+  summarise(avg_sal = mean(salary, na.rm = TRUE ),
+            max_sal = max(salary, na.rm = TRUE),
+            min_sal = min(salary, na.rm = TRUE) )
+
 
 str(salaries)
 
@@ -73,3 +81,16 @@ ggplot(sal_mean, aes(y= sal_mean$yearID, x = log(sal_mean$avg_sal), stat_  ) ) +
 
 # Follow this tutorial
 # http://tutorials.iq.harvard.edu/R/Rgraphics/Rgraphics.html
+
+ggplot(salaries, aes(yearID, salary ) ) + geom_point()
+
+ggplot(sal_mean, aes(yearID, avg_sal ) ) + geom_line()
+
+ggplot(sal_year_lg, aes(yearID, avg_sal, col=lgID)  ) + geom_line() +
+  geom_smooth(se = FALSE, method = "lm" )
+
+ggplot(salaries, aes(yearID, salary, color=lgID ) ) + 
+  geom_point() +
+  facet_wrap(lgID~ teamID )
+
+View(salaries)
